@@ -8,9 +8,6 @@ import { createAdminSession } from '@/lib/auth';
 // паролем админки. Иначе — обычная проверка.
 export async function POST(req: NextRequest) {
   try {
-    console.log('DEBUG SUPABASE_URL:', JSON.stringify(process.env.NEXT_PUBLIC_SUPABASE_URL));
-    console.log('DEBUG SECRET_KEY prefix:', process.env.SUPABASE_SECRET_KEY?.slice(0, 12), 'length:', process.env.SUPABASE_SECRET_KEY?.length);
-
     const body = await req.json().catch(() => null);
     const password = body?.password;
 
