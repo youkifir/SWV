@@ -21,17 +21,8 @@ export default function AdminNav() {
   }
 
   return (
-    <nav
-      style={{
-        width: 220,
-        borderRight: '1px solid var(--border)',
-        padding: '32px 20px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 4,
-      }}
-    >
-      <p className="pill accent" style={{ alignSelf: 'flex-start', marginBottom: 20 }}>
+    <nav className="admin-nav">
+      <p className="pill accent admin-nav-brand">
         SWV Admin
       </p>
 

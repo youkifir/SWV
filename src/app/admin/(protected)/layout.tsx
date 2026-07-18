@@ -13,9 +13,9 @@ export default async function ProtectedAdminLayout({
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <div className="admin-shell">
       <AdminNav />
-      <main style={{ flex: 1, padding: '32px 40px', maxWidth: 1000 }}>{children}</main>
+      <main className="admin-main">{children}</main>
     </div>
   );
 }

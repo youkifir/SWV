@@ -1,41 +1,35 @@
-import { supabaseBrowser } from '@/lib/supabase/client';
-import type { HistoryEvent } from '@/lib/types';
+// Раздел "История" полностью отдан под дизайн Canva — вместо своей ленты
+// событий из базы (history_events там больше не используется на этой
+// странице, хотя таблица и заявки на модерацию остаются в бэкенде на
+// случай, если решите вернуть свою ленту).
+//
+// ЗАМЕНИ CANVA_EMBED_URL на реальную ссылку для встраивания:
+// в Canva — Поделиться → Экспорт → Встроить, получится ссылка вида
+// https://www.canva.com/design/XXXXX/view?embed
 
-export default async function HistoryPage() {
-  const { data } = await supabaseBrowser
-    .from('history_events')
-    .select('*')
-    .eq('status', 'published')
-    .order('event_date', { ascending: true });
+const CANVA_EMBED_URL = 'https://www.canva.com/design/DAHJFHlTza8/view?embed'; // TODO: заменить на реальную embed-ссылку
 
-  const events = (data as HistoryEvent[]) ?? [];
-
+export default function HistoryPage() {
   return (
-    <main style={{ minHeight: '100vh', padding: '48px 24px', maxWidth: 700, margin: '0 auto' }}>
+    <main style={{ minHeight: '100vh', padding: '48px 24px', maxWidth: 900, margin: '0 auto' }}>
       <p className="pill accent">История сервера</p>
-      <h1 style={{ fontSize: 30, marginTop: 8, marginBottom: 32 }}>Как всё начиналось</h1>
+      <h1 style={{ fontSize: 30, marginTop: 8, marginBottom: 24 }}>Как всё начиналось</h1>
 
-      <div className="stack" style={{ gap: 20 }}>
-        {events.map((event) => (
-          <div key={event.id} className="row" style={{ alignItems: 'flex-start', gap: 20 }}>
-            <p className="muted" style={{ minWidth: 90, fontSize: 13 }}>
-              {new Date(event.event_date).toLocaleDateString('ru-RU', { year: 'numeric', month: 'short', day: 'numeric' })}
-            </p>
-            <div className="card" style={{ flex: 1 }}>
-              {event.image_url && (
-                <img
-                  src={event.image_url}
-                  alt=""
-                  style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 8, marginBottom: 12 }}
-                />
-              )}
-              <p style={{ fontWeight: 500 }}>{event.title}</p>
-              {event.description && <p className="muted" style={{ marginTop: 4 }}>{event.description}</p>}
-            </div>
-          </div>
-        ))}
-        {events.length === 0 && <p className="muted">История пока не написана.</p>}
+      {/* Официальный адаптивный embed-контейнер Canva: отношение сторон
+          держится через padding-top, iframe растягивается на всю ширину. */}
+      <div style={{ position: 'relative', width: '100%', height: 0, paddingTop: '56.2225%', paddingBottom: 0, overflow: 'hidden', borderRadius: 12, willChange: 'transform' }}>
+        <iframe
+          loading="lazy"
+          style={{ position: 'absolute', width: '100%', height: '100%', top: 0, left: 0, border: 'none', padding: 0, margin: 0 }}
+          src={CANVA_EMBED_URL}
+          allow="fullscreen"
+        />
       </div>
+      <p className="muted" style={{ fontSize: 12, marginTop: 8 }}>
+        <a href={CANVA_EMBED_URL.replace('?embed', '')} target="_blank" rel="noopener noreferrer">
+          Открыть в Canva
+        </a>
+      </p>
     </main>
   );
 }
