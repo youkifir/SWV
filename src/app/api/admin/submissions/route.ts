@@ -11,7 +11,11 @@ const TABLE_BY_TYPE: Record<string, string> = {
 
 // Приводит payload (camelCase из формы) к полям целевой таблицы (snake_case).
 // edits, если переданы админом при одобрении, перекрывают поля из исходной заявки.
-function toTableRow(type: string, payload: Record<string, unknown>, edits?: Record<string, unknown>) {
+function toTableRow(
+  type: string,
+  payload: Record<string, unknown>,
+  edits?: Record<string, unknown>
+): Record<string, unknown> | null {
   const merged = { ...payload, ...(edits ?? {}) };
 
   switch (type) {
@@ -110,8 +114,8 @@ export async function PATCH(req: NextRequest) {
   }
 
   const { error: publishError } = submission.target_id
-    ? await supabase.from(table).update(row).eq('id', submission.target_id)
-    : await supabase.from(table).insert(row);
+    ? await supabase.from(table).update(row as never).eq('id', submission.target_id)
+    : await supabase.from(table).insert(row as never);
 
   if (publishError) {
     return NextResponse.json({ ok: false, error: 'Не удалось опубликовать' }, { status: 500 });
