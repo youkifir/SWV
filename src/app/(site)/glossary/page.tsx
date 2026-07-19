@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import type { Member } from '@/lib/types';
 
+export const dynamic = 'force-dynamic';
+
 export default async function GlossaryPage() {
   const { data } = await supabaseBrowser
     .from('members')

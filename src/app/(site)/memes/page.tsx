@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import type { Meme } from '@/lib/types';
 
+export const dynamic = 'force-dynamic';
+
 export default async function MemesPage() {
   const { data } = await supabaseBrowser
     .from('memes')

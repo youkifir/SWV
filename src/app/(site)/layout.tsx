@@ -26,6 +26,16 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         </nav>
 
         <ThemeToggle />
+        <a
+          href="https://discord.gg/7MHRxghSTR"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ textDecoration: 'none' }}
+        >
+          <button className="secondary" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            💬 Discord
+          </button>
+        </a>
       </header>
       {children}
     </>
