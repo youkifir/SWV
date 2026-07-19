@@ -65,8 +65,8 @@ export default function AdminDotaPage() {
           Нужен только Steam Account ID (32-bit) каждого игрока.
         </p>
         <p className="muted" style={{ fontSize: 12, marginTop: 4 }}>
-          Как найти: зайти на opendota.com, вставить в поиск ссылку на Steam-профиль или Dota Friend ID —
-          нужное число будет в адресной строке (например, opendota.com/players/<b>123456789</b>).
+          Можно вставить любой формат — обычный Account ID или длинный Steam64 ID
+          (начинается на 7656119...) из профиля Steam, конвертируется автоматически.
         </p>
       </div>
 

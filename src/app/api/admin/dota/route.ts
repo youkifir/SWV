@@ -20,6 +20,21 @@ export async function GET() {
   return NextResponse.json({ ok: true, players: data });
 }
 
+const STEAM64_BASE = 76561197960265728n;
+
+// Если вставили полный Steam64 ID (17 цифр, начинается с 7656119...) —
+// автоматически переводим в Account ID (Steam32), который нужен OpenDota.
+function normalizeSteamId(raw: string): number | null {
+  const trimmed = raw.trim();
+  if (!/^\d+$/.test(trimmed)) return null;
+
+  const asBigInt = BigInt(trimmed);
+  if (asBigInt >= STEAM64_BASE) {
+    return Number(asBigInt - STEAM64_BASE);
+  }
+  return Number(asBigInt);
+}
+
 // POST { name, steamAccountId } — добавить игрока
 export async function POST(req: NextRequest) {
   if (!(await requireAdmin())) {
@@ -27,11 +42,19 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json().catch(() => null);
-  const { name, steamAccountId } = body ?? {};
+  const { name, steamAccountId: rawSteamId } = body ?? {};
 
-  if (!name || !steamAccountId || isNaN(Number(steamAccountId))) {
+  if (!name || !rawSteamId) {
     return NextResponse.json(
-      { ok: false, error: 'Нужны имя и числовой Steam Account ID (32-bit)' },
+      { ok: false, error: 'Нужны имя и Steam ID' },
+      { status: 400 }
+    );
+  }
+
+  const steamAccountId = normalizeSteamId(String(rawSteamId));
+  if (steamAccountId === null) {
+    return NextResponse.json(
+      { ok: false, error: 'Steam ID должен состоять только из цифр' },
       { status: 400 }
     );
   }
@@ -39,7 +62,7 @@ export async function POST(req: NextRequest) {
   const supabase = createServerClient();
   const { data, error } = await supabase
     .from('dota_players')
-    .insert({ name, steam_account_id: Number(steamAccountId) })
+    .insert({ name, steam_account_id: steamAccountId })
     .select()
     .single();
 
