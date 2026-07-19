@@ -4,12 +4,12 @@
 const MEDAL_NAMES: Record<number, string> = {
   1: 'Рекрут',
   2: 'Страж',
-  3: 'Крестоносец',
-  4: 'Архонт',
+  3: 'Рыцарь',
+  4: 'Герой',
   5: 'Легенда',
   6: 'Властелин',
   7: 'Божество',
-  8: 'Бессмертный',
+  8: 'Титан',
 };
 
 export type DotaPlayerStats = {
@@ -30,11 +30,12 @@ export type DotaPlayerStats = {
 export async function fetchDotaPlayer(
   id: string,
   name: string,
-  steamAccountId: number
+  steamAccountId: number,
+  options?: { force?: boolean }
 ): Promise<DotaPlayerStats> {
   try {
     const res = await fetch(`https://api.opendota.com/api/players/${steamAccountId}`, {
-      next: { revalidate: 300 }, // кэш на 5 минут, чтобы не долбить API на каждый заход
+      ...(options?.force ? { cache: 'no-store' as const } : { next: { revalidate: 300 } }),
     });
 
     if (!res.ok) throw new Error(`OpenDota вернул ${res.status}`);
@@ -77,5 +78,18 @@ export async function fetchDotaPlayer(
       leaderboardRank: null,
       rankValue: -1,
     };
+  }
+}
+
+// Просит OpenDota пересобрать данные игрока (недавние матчи, ранг).
+// Это не мгновенно — обычно занимает от нескольких секунд до пары минут.
+export async function requestDotaRefresh(steamAccountId: number): Promise<boolean> {
+  try {
+    const res = await fetch(`https://api.opendota.com/api/players/${steamAccountId}/refresh`, {
+      method: 'POST',
+    });
+    return res.ok;
+  } catch {
+    return false;
   }
 }
