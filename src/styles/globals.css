@@ -1,39 +1,47 @@
-/* SWV — имперская геральдика: тёмно-синий + багровый (по цветам герба),
-   строгий засечковый шрифт для заголовков. Тема переключается атрибутом
-   data-theme на <html> ("dark" | "light"), по умолчанию тёмная. */
+/* SWV — современная яркая палитра: почти-чёрный фон, градиент
+   фиолетовый→розовый как фирменный акцент, лаймовый как искра для
+   мелких хайлайтов. Крупный geometric-шрифт Unbounded для заголовков —
+   даёт тот самый "вау" на больших надписях. Тема переключается
+   атрибутом data-theme на <html> ("dark" | "light"), по умолчанию тёмная. */
 
 :root,
 [data-theme='dark'] {
-  --bg: #0a0e18;
-  --surface: #121729;
-  --surface-raised: #1a2138;
-  --border: #2a3455;
-  --text: #eef0f7;
-  --text-muted: #8b91ab;
-  --accent: #d81e2c;
-  --accent-strong: #f13341;
-  --accent-contrast: #fff;
-  --gold: #c9a227;
-  --danger: #e0665c;
-  --success: #6fbf8b;
-  --radius: 10px;
-  --font-display: 'Yeseva One', Georgia, serif;
-  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --bg: #0b0b12;
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface-raised: rgba(255, 255, 255, 0.07);
+  --border: rgba(255, 255, 255, 0.1);
+  --text: #f5f4fb;
+  --text-muted: #9694ab;
+  --accent-1: #8b5cf6;
+  --accent-2: #ec4899;
+  --accent: #a370ff;
+  --accent-strong: #b989ff;
+  --accent-contrast: #0b0b12;
+  --spark: #d6ff3f;
+  --danger: #ff6b6b;
+  --success: #4ade80;
+  --radius: 18px;
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  --font-display: 'Unbounded', system-ui, sans-serif;
+  --font-body: 'Manrope', system-ui, -apple-system, sans-serif;
 }
 
 [data-theme='light'] {
-  --bg: #f3efe4;
-  --surface: #fffdf8;
-  --surface-raised: #f0e9d8;
-  --border: #ddd2b3;
-  --text: #171a26;
-  --text-muted: #6b6455;
-  --accent: #c21625;
-  --accent-strong: #9c1119;
+  --bg: #f7f6fb;
+  --surface: #ffffff;
+  --surface-raised: #f0edf9;
+  --border: #e4e0f2;
+  --text: #17151f;
+  --text-muted: #6d6a80;
+  --accent-1: #7c3aed;
+  --accent-2: #db2777;
+  --accent: #7c3aed;
+  --accent-strong: #6d28d9;
   --accent-contrast: #fff;
-  --gold: #9c7a17;
-  --danger: #c0392b;
-  --success: #2e7d51;
+  --spark: #84cc16;
+  --danger: #dc2626;
+  --success: #16a34a;
+  --shadow: 0 8px 24px rgba(124, 58, 237, 0.12);
 }
 
 * {
@@ -50,10 +58,18 @@ html, body {
   transition: background 0.2s ease, color 0.2s ease;
 }
 
+[data-theme='dark'] body {
+  background-image:
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(139, 92, 246, 0.25), transparent),
+    radial-gradient(ellipse 700px 500px at 100% 0%, rgba(236, 72, 153, 0.18), transparent);
+  background-attachment: fixed;
+}
+
 h1, h2, h3 {
   font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: 0.01em;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
   margin: 0;
 }
 
@@ -70,54 +86,68 @@ button, input, textarea, select {
 input, textarea, select {
   background: var(--surface-raised);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 10px 12px;
   outline: none;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 input:focus, textarea:focus, select:focus {
-  border-color: var(--accent);
+  border-color: var(--accent-1);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
 }
 
 button {
   cursor: pointer;
   border: none;
-  border-radius: 8px;
-  padding: 10px 16px;
-  font-weight: 500;
-  background: var(--accent);
-  color: var(--accent-contrast);
-  transition: background 0.15s ease, opacity 0.15s ease;
+  border-radius: 999px;
+  padding: 11px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  color: #fff;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.35);
 }
 
 button:hover {
-  background: var(--accent-strong);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(139, 92, 246, 0.45);
+}
+
+button:active {
+  transform: translateY(0);
 }
 
 button:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 button.secondary {
   background: var(--surface-raised);
   color: var(--text);
   border: 1px solid var(--border);
+  box-shadow: none;
 }
 
 button.secondary:hover {
   background: var(--border);
+  box-shadow: none;
 }
 
 button.danger {
   background: transparent;
   color: var(--danger);
   border: 1px solid var(--danger);
+  box-shadow: none;
 }
 
 button.danger:hover {
-  background: rgba(224, 102, 92, 0.1);
+  background: rgba(255, 107, 107, 0.1);
+  box-shadow: none;
 }
 
 .card {
@@ -125,6 +155,17 @@ button.danger:hover {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 20px;
+  backdrop-filter: blur(20px);
+}
+
+.card-link {
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-link:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-1);
+  box-shadow: var(--shadow);
 }
 
 .muted {
@@ -167,36 +208,43 @@ button.danger:hover {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 999px;
   font-size: 12px;
+  font-weight: 600;
   background: var(--surface-raised);
   border: 1px solid var(--border);
   color: var(--text-muted);
 }
 
 .pill.accent {
-  color: var(--gold);
-  border-color: var(--gold);
+  color: var(--text);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(236, 72, 153, 0.25));
+  border-color: transparent;
 }
 
-/* Тонкая имперская линия-разделитель под гербом/заголовками */
-.crest-divider {
-  width: 60px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  margin: 12px auto;
+/* Градиентный текст — для заголовков, ради которых всё это затевалось */
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-/* Общая шапка сайта */
+/* Общая шапка сайта — стеклянная, прилипает к верху */
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
+  padding: 14px 24px;
   border-bottom: 1px solid var(--border);
   flex-wrap: wrap;
   gap: 12px;
+  background: color-mix(in srgb, var(--bg) 75%, transparent);
+  backdrop-filter: blur(16px);
 }
 
 .site-header-links {
@@ -206,11 +254,13 @@ button.danger:hover {
 }
 
 .site-header-links a {
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
   text-decoration: none;
   font-size: 14px;
+  font-weight: 500;
   color: var(--text-muted);
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .site-header-links a:hover {
@@ -223,12 +273,15 @@ button.danger:hover {
   border: 1px solid var(--border);
   color: var(--text);
   padding: 8px 10px;
-  border-radius: 8px;
+  border-radius: 999px;
   line-height: 1;
+  box-shadow: none;
 }
 
 .theme-toggle:hover {
   background: var(--border);
+  transform: none;
+  box-shadow: none;
 }
 
 /* Админка: сайдбар слева на десктопе, горизонтальная полоса сверху на мобильном */

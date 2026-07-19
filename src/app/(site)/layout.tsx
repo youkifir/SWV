@@ -16,7 +16,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <header className="site-header">
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
           <Image src="/logo.png" alt="SWV" width={32} height={32} />
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: 20 }}>SWV</span>
+          <span className="gradient-text" style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 600 }}>SWV</span>
         </Link>
 
         <nav className="site-header-links">

@@ -1,14 +1,14 @@
 import type { Metadata } from 'next';
-import { Yeseva_One, Inter } from 'next/font/google';
+import { Unbounded, Manrope } from 'next/font/google';
 import '@/styles/globals.css';
 
-const displayFont = Yeseva_One({
+const displayFont = Unbounded({
   subsets: ['latin', 'cyrillic'],
   variable: '--font-display',
-  weight: '400',
+  weight: ['500', '600', '700'],
 });
 
-const inter = Inter({
+const body = Manrope({
   subsets: ['latin', 'cyrillic'],
   variable: '--font-body',
 });
@@ -33,7 +33,7 @@ const THEME_INIT_SCRIPT = `
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" className={`${displayFont.variable} ${inter.variable}`} data-theme="dark">
+    <html lang="ru" className={`${displayFont.variable} ${body.variable}`} data-theme="dark">
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
