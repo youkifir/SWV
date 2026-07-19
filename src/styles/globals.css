@@ -245,6 +245,12 @@ button.danger:hover {
   gap: 12px;
   background: color-mix(in srgb, var(--bg) 75%, transparent);
   backdrop-filter: blur(16px);
+  transform: translateY(0);
+  transition: transform 0.25s ease;
+}
+
+.site-header--hidden {
+  transform: translateY(-100%);
 }
 
 .site-header-links {
