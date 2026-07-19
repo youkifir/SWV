@@ -15,16 +15,31 @@ function StarDots({ count }: { count: number }) {
 export default function DotaPage() {
   const [players, setPlayers] = useState<DotaPlayerStats[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshingId, setRefreshingId] = useState<string | null>(null);
+  const [refreshedIds, setRefreshedIds] = useState<Set<string>>(new Set());
+
+  async function load(force = false) {
+    setLoading(true);
+    const res = await fetch(`/api/dota${force ? '?force=1' : ''}`);
+    const data = await res.json();
+    if (data.ok) setPlayers(data.players);
+    setLoading(false);
+  }
 
   useEffect(() => {
-    async function load() {
-      const res = await fetch('/api/dota');
-      const data = await res.json();
-      if (data.ok) setPlayers(data.players);
-      setLoading(false);
-    }
     load();
   }, []);
+
+  async function handleRefresh(playerId: string) {
+    setRefreshingId(playerId);
+    await fetch('/api/dota/refresh', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ playerId }),
+    });
+    setRefreshedIds((prev) => new Set(prev).add(playerId));
+    setRefreshingId(null);
+  }
 
   return (
     <main style={{ minHeight: '100vh', padding: '48px 24px', maxWidth: 700, margin: '0 auto' }}>
@@ -35,6 +50,11 @@ export default function DotaPage() {
         </h1>
         <p className="muted" style={{ marginTop: 8 }}>Обновляется автоматически из статистики OpenDota</p>
       </div>
+
+      <p className="muted" style={{ textAlign: 'center', marginBottom: 16, fontSize: 12 }}>
+        Ранг не совпадает с реальным? OpenDota обновляет данные с задержкой — нажми "Обновить"
+        у себя в списке и перезагрузи страницу через минуту-две.
+      </p>
 
       {loading ? (
         <p className="muted" style={{ textAlign: 'center' }}>Загружаем…</p>
@@ -57,21 +77,31 @@ export default function DotaPage() {
                 </div>
               </div>
 
-              <div style={{ textAlign: 'right' }}>
-                {player.medal ? (
-                  <>
-                    <p style={{ fontWeight: 600 }}>{player.medal}</p>
-                    {player.isImmortal ? (
-                      <p className="muted" style={{ fontSize: 12 }}>
-                        {player.leaderboardRank ? `#${player.leaderboardRank} в топе` : 'ранг скрыт'}
-                      </p>
-                    ) : (
-                      <p className="muted" style={{ fontSize: 12 }}><StarDots count={player.stars} /></p>
-                    )}
-                  </>
-                ) : (
-                  <p className="muted">Ранг не виден (скрыт в настройках Steam/Dota)</p>
-                )}
+              <div className="row">
+                <div style={{ textAlign: 'right' }}>
+                  {player.medal ? (
+                    <>
+                      <p style={{ fontWeight: 600 }}>{player.medal}</p>
+                      {player.isImmortal ? (
+                        <p className="muted" style={{ fontSize: 12 }}>
+                          {player.leaderboardRank ? `#${player.leaderboardRank} в топе` : 'ранг скрыт'}
+                        </p>
+                      ) : (
+                        <p className="muted" style={{ fontSize: 12 }}><StarDots count={player.stars} /></p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="muted">Ранг не виден (скрыт в настройках Steam/Dota)</p>
+                  )}
+                </div>
+                <button
+                  className="secondary"
+                  style={{ padding: '6px 10px', fontSize: 12 }}
+                  disabled={refreshingId === player.id}
+                  onClick={() => handleRefresh(player.id)}
+                >
+                  {refreshedIds.has(player.id) ? '✓ Запрошено' : refreshingId === player.id ? '…' : 'Обновить'}
+                </button>
               </div>
             </div>
           ))}
