@@ -1,7 +1,7 @@
 import CanvaEmbed from '@/components/CanvaEmbed';
 
 // ЗАМЕНИ на реальную embed-ссылку: Canva → Поделиться → Экспорт → Встроить
-const CANVA_EMBED_URL = 'https://www.canva.com/design/DAHPc_OwIZU/twU5BcYpBjyK9_d0Ciea5w/view';
+const CANVA_EMBED_URL = 'https://www.canva.com/design/DAHPc_OwIZU/twU5BcYpBjyK9_d0Ciea5w/view?embed';
 
 export default function IcebergPage() {
   return (
