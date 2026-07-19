@@ -11,6 +11,7 @@ const LINKS = [
   { href: '/iceberg', label: 'Айсберг' },
   { href: '/history', label: 'История' },
   { href: '/memes', label: 'Мемы' },
+  { href: '/dota', label: 'Dota 2' },
 ];
 
 export default function SiteHeader() {
