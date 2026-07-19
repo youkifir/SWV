@@ -49,34 +49,48 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ ok: true, codes: data, seasonId });
 }
 
-// POST { seasonId, count, label? } — сгенерировать N уникальных кодов
+// POST { seasonId, count, label? } — сгенерировать N анонимных кодов с одной общей меткой
+// POST { seasonId, names: string[] } — сгенерировать по одному именному коду на каждое имя из списка
 export async function POST(req: NextRequest) {
   if (!(await requireAdmin())) {
     return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
   }
 
   const body = await req.json().catch(() => null);
-  const { seasonId, count, label } = body ?? {};
+  const { seasonId, count, label, names } = body ?? {};
 
-  if (!seasonId || !count || count < 1 || count > 500) {
-    return NextResponse.json(
-      { ok: false, error: 'Нужны seasonId и count (от 1 до 500)' },
-      { status: 400 }
-    );
+  if (!seasonId) {
+    return NextResponse.json({ ok: false, error: 'Нужен seasonId' }, { status: 400 });
+  }
+
+  let labels: (string | null)[];
+
+  if (Array.isArray(names) && names.length > 0) {
+    if (names.length > 500) {
+      return NextResponse.json({ ok: false, error: 'Не больше 500 имён за раз' }, { status: 400 });
+    }
+    labels = names.map((n: string) => n.trim()).filter(Boolean);
+  } else {
+    if (!count || count < 1 || count > 500) {
+      return NextResponse.json(
+        { ok: false, error: 'Нужны seasonId и count (от 1 до 500), либо список names' },
+        { status: 400 }
+      );
+    }
+    labels = Array.from({ length: count }, () => label ?? null);
   }
 
   const supabase = createServerClient();
 
-  // Генерируем с запасом уникальности: пробуем вставить, при конфликте
-  // (крайне маловероятном при алфавите в 32 символа и длине 6) — просто
-  // генерируем ещё один код взамен.
+  // Генерируем с запасом уникальности: при коллизии (крайне маловероятной
+  // при алфавите в 32 символа и длине 6) — просто берём другой код взамен.
   const rows: { season_id: string; code: string; label: string | null }[] = [];
   const seen = new Set<string>();
-  while (rows.length < count) {
-    const code = generateCode();
-    if (seen.has(code)) continue;
+  for (const entryLabel of labels) {
+    let code = generateCode();
+    while (seen.has(code)) code = generateCode();
     seen.add(code);
-    rows.push({ season_id: seasonId, code, label: label ?? null });
+    rows.push({ season_id: seasonId, code, label: entryLabel });
   }
 
   const { data, error } = await supabase.from('voter_codes').insert(rows).select();

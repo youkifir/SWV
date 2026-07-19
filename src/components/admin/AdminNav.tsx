@@ -7,6 +7,8 @@ const LINKS = [
   { href: '/admin', label: 'Дашборд' },
   { href: '/admin/nominations', label: 'Номинации' },
   { href: '/admin/codes', label: 'Коды' },
+  { href: '/admin/results', label: 'Результаты' },
+  { href: '/admin/votes', label: 'Кто как голосовал' },
   { href: '/admin/submissions', label: 'Заявки' },
   { href: '/admin/seasons', label: 'Сезоны' },
 ];
