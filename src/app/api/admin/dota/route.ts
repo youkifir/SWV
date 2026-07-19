@@ -20,7 +20,7 @@ export async function GET() {
   return NextResponse.json({ ok: true, players: data });
 }
 
-const STEAM64_BASE = 76561197960265728n;
+const STEAM64_BASE = BigInt('76561197960265728');
 
 // Если вставили полный Steam64 ID (17 цифр, начинается с 7656119...) —
 // автоматически переводим в Account ID (Steam32), который нужен OpenDota.
