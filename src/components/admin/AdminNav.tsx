@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const LINKS = [
   { href: '/admin', label: 'Дашборд' },
@@ -24,9 +26,10 @@ export default function AdminNav() {
 
   return (
     <nav className="admin-nav">
-      <p className="pill accent admin-nav-brand">
-        SWV Admin
-      </p>
+      <div className="row admin-nav-brand" style={{ gap: 8 }}>
+        <Image src="/logo.png" alt="" width={22} height={22} />
+        <span className="pill accent">SWV Admin</span>
+      </div>
 
       {LINKS.map((link) => {
         const active = pathname === link.href;
@@ -48,9 +51,10 @@ export default function AdminNav() {
         );
       })}
 
-      <button className="secondary" style={{ marginTop: 24 }} onClick={handleLogout}>
-        Выйти
-      </button>
+      <div className="row" style={{ marginTop: 24 }}>
+        <ThemeToggle />
+        <button className="secondary" onClick={handleLogout}>Выйти</button>
+      </div>
     </nav>
   );
 }

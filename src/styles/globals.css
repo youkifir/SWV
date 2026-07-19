@@ -1,23 +1,39 @@
-/* SWV — дизайн-система.
-   Идея: панель организатора как "командный пункт" ивента — тёмная,
-   собранная, с одним акцентным цветом цвета латуни/трофея (это же
-   тематически связано с наградами SWAG). Не дефолтный AI-шный
-   крем+терракота и не чёрный+кислотный зелёный — тёплый графит с латунью. */
+/* SWV — имперская геральдика: тёмно-синий + багровый (по цветам герба),
+   строгий засечковый шрифт для заголовков. Тема переключается атрибутом
+   data-theme на <html> ("dark" | "light"), по умолчанию тёмная. */
 
-:root {
-  --bg: #16161a;
-  --surface: #1e1f26;
-  --surface-raised: #262832;
-  --border: #34363f;
-  --text: #eceef2;
-  --text-muted: #9295a3;
-  --accent: #d8a84e;
-  --accent-strong: #f0bc63;
+:root,
+[data-theme='dark'] {
+  --bg: #0a0e18;
+  --surface: #121729;
+  --surface-raised: #1a2138;
+  --border: #2a3455;
+  --text: #eef0f7;
+  --text-muted: #8b91ab;
+  --accent: #d81e2c;
+  --accent-strong: #f13341;
+  --accent-contrast: #fff;
+  --gold: #c9a227;
   --danger: #e0665c;
   --success: #6fbf8b;
   --radius: 10px;
-  --font-display: 'Playfair Display', Georgia, serif;
+  --font-display: 'Yeseva One', Georgia, serif;
   --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+[data-theme='light'] {
+  --bg: #f3efe4;
+  --surface: #fffdf8;
+  --surface-raised: #f0e9d8;
+  --border: #ddd2b3;
+  --text: #171a26;
+  --text-muted: #6b6455;
+  --accent: #c21625;
+  --accent-strong: #9c1119;
+  --accent-contrast: #fff;
+  --gold: #9c7a17;
+  --danger: #c0392b;
+  --success: #2e7d51;
 }
 
 * {
@@ -31,12 +47,13 @@ html, body {
   color: var(--text);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 h1, h2, h3 {
   font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-weight: 400;
+  letter-spacing: 0.01em;
   margin: 0;
 }
 
@@ -70,7 +87,7 @@ button {
   padding: 10px 16px;
   font-weight: 500;
   background: var(--accent);
-  color: #1a1508;
+  color: var(--accent-contrast);
   transition: background 0.15s ease, opacity 0.15s ease;
 }
 
@@ -135,6 +152,7 @@ button.danger:hover {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .spread {
@@ -158,12 +176,59 @@ button.danger:hover {
 }
 
 .pill.accent {
-  color: var(--accent-strong);
-  border-color: rgba(216, 168, 78, 0.4);
+  color: var(--gold);
+  border-color: var(--gold);
 }
 
-.row {
+/* Тонкая имперская линия-разделитель под гербом/заголовками */
+.crest-divider {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 12px auto;
+}
+
+/* Общая шапка сайта */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
   flex-wrap: wrap;
+  gap: 12px;
+}
+
+.site-header-links {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.site-header-links a {
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.site-header-links a:hover {
+  background: var(--surface-raised);
+  color: var(--text);
+}
+
+.theme-toggle {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 10px;
+  border-radius: 8px;
+  line-height: 1;
+}
+
+.theme-toggle:hover {
+  background: var(--border);
 }
 
 /* Админка: сайдбар слева на десктопе, горизонтальная полоса сверху на мобильном */
@@ -234,7 +299,6 @@ button.danger:hover {
   }
 }
 
-/* Публичные страницы: сузить отступы на маленьких экранах поверх inline-стилей */
 @media (max-width: 480px) {
   main {
     padding: 28px 16px !important;

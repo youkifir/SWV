@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -52,8 +53,9 @@ export default function AdminLoginPage() {
       }}
     >
       <form onSubmit={handleSubmit} className="card stack" style={{ width: 360 }}>
-        <div className="stack" style={{ gap: 4 }}>
-          <p className="pill accent" style={{ alignSelf: 'flex-start' }}>Панель организатора</p>
+        <div className="stack" style={{ gap: 4, textAlign: 'center' }}>
+          <Image src="/logo.png" alt="SWV" width={48} height={48} style={{ margin: '0 auto' }} />
+          <p className="pill accent" style={{ alignSelf: 'center', marginTop: 8 }}>Панель организатора</p>
           <h1 style={{ fontSize: 26 }}>Вход в SWV</h1>
           <p className="muted">Пароль знает только организатор сервера</p>
         </div>
