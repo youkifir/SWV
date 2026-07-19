@@ -40,12 +40,12 @@ export default function ResultsPage() {
   }, [seasonId]);
 
   return (
-    <main style={{ minHeight: '100vh', padding: '48px 24px', maxWidth: 700, margin: '0 auto' }}>
-      <p className="pill accent">SWAG Awards</p>
-      <div className="spread" style={{ marginTop: 12, marginBottom: 24 }}>
-        <h1 style={{ fontSize: 30 }}>Результаты</h1>
+    <main style={{ minHeight: '100vh', padding: '48px 24px', maxWidth: 1100, margin: '0 auto' }}>
+      <div style={{ textAlign: 'center', marginBottom: 32 }}>
+        <span className="pill accent">SWAG Awards</span>
+        <h1 className="gradient-text" style={{ fontSize: 'clamp(32px, 6vw, 48px)', marginTop: 16 }}>Результаты</h1>
         {seasons.length > 0 && (
-          <select value={seasonId} onChange={(e) => setSeasonId(e.target.value)}>
+          <select value={seasonId} onChange={(e) => setSeasonId(e.target.value)} style={{ marginTop: 16 }}>
             {seasons.map((s) => (
               <option key={s.id} value={s.id}>{s.label}</option>
             ))}
@@ -54,13 +54,13 @@ export default function ResultsPage() {
       </div>
 
       {loading ? (
-        <p className="muted">Загружаем…</p>
+        <p className="muted" style={{ textAlign: 'center' }}>Загружаем…</p>
       ) : !published ? (
-        <div className="card">
+        <div className="card" style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' }}>
           <p>Результаты этого сезона ещё не объявлены — загляни позже.</p>
         </div>
       ) : (
-        <div className="stack">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
           {results?.map((result) => (
             <ResultCard key={result.nomination.id} result={result} />
           ))}
