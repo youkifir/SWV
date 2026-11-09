@@ -3,8 +3,8 @@ import { createServerClient } from '@/lib/supabase/server';
 import { fetchDotaPlayer } from '@/lib/dota';
 
 // GET ?force=1 — лидерборд по всем зарегистрированным игрокам, отсортированный
-// по рангу. Данные подтягиваются с OpenDota в реальном времени (с кэшем
-// на 5 минут, если не передан force=1), никакого ручного ввода ММР.
+// по рангу. Данные подтягиваются с OpenDota (in-memory кэш на 5 минут,
+// force=1 пропускает кэш), никакого ручного ввода ММР.
 export async function GET(req: NextRequest) {
   const force = req.nextUrl.searchParams.get('force') === '1';
   const supabase = createServerClient();

@@ -1,5 +1,5 @@
--- Миграция 001: сезоны SWAG Awards + разделы SWV (глоссарий, айсберг,
--- история, мемы, заявки на модерацию).
+-- Миграция 001: сезоны SWAG Awards + разделы SWV (айсберг, история,
+-- заявки на модерацию).
 -- Выполнить в Supabase SQL Editor ПОСЛЕ уже применённого schema.sql
 -- (той версии, где были только nominations/nominees/voter_codes/votes/event_settings).
 
@@ -56,15 +56,6 @@ create policy "public read seasons" on seasons for select using (true);
 -- 3) Разделы SWV
 create type content_status as enum ('published', 'pending', 'rejected');
 
-create table members (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  description text,
-  avatar_url text,
-  status content_status not null default 'published',
-  created_at timestamptz not null default now()
-);
-
 create table iceberg_entries (
   id uuid primary key default gen_random_uuid(),
   level int not null,
@@ -84,36 +75,11 @@ create table history_events (
   created_at timestamptz not null default now()
 );
 
-create table memes (
-  id uuid primary key default gen_random_uuid(),
-  image_url text not null,
-  caption text,
-  status content_status not null default 'published',
-  created_at timestamptz not null default now()
-);
-
-create table submissions (
-  id uuid primary key default gen_random_uuid(),
-  type text not null check (type in ('member', 'iceberg', 'history', 'meme')),
-  target_id uuid,
-  payload jsonb not null,
-  submitter_name text,
-  status content_status not null default 'pending',
-  created_at timestamptz not null default now(),
-  reviewed_at timestamptz
-);
-
 create index on iceberg_entries (level);
 create index on history_events (event_date);
-create index on submissions (status);
 
-alter table members enable row level security;
 alter table iceberg_entries enable row level security;
 alter table history_events enable row level security;
-alter table memes enable row level security;
-alter table submissions enable row level security;
 
-create policy "public read members" on members for select using (status = 'published');
 create policy "public read iceberg" on iceberg_entries for select using (status = 'published');
 create policy "public read history" on history_events for select using (status = 'published');
-create policy "public read memes" on memes for select using (status = 'published');

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import ProgressBar from '@/components/ProgressBar';
@@ -119,7 +120,7 @@ export default function VotePage() {
         <p className="pill accent">Готово</p>
         <h1 style={{ fontSize: 28 }}>Спасибо за голос!</h1>
         <p className="muted">Результаты объявят после окончания голосования</p>
-        <a href="/"><button className="secondary">На главную</button></a>
+        <Link href="/"><button className="secondary">На главную</button></Link>
       </main>
     );
   }
@@ -160,9 +161,16 @@ export default function VotePage() {
 
       {error && <p className="error-text">{error}</p>}
 
-      <button onClick={handleNext} disabled={!selected || submitting} style={{ minWidth: 160 }}>
-        {submitting ? 'Отправляем…' : step < nominations.length - 1 ? 'Далее' : 'Завершить'}
-      </button>
+      <div className="row" style={{ gap: 12 }}>
+        {step > 0 && (
+          <button className="secondary" onClick={() => setStep(step - 1)} disabled={submitting}>
+            Назад
+          </button>
+        )}
+        <button onClick={handleNext} disabled={!selected || submitting} style={{ minWidth: 160 }}>
+          {submitting ? 'Отправляем…' : step < nominations.length - 1 ? 'Далее' : 'Завершить'}
+        </button>
+      </div>
     </main>
   );
 }

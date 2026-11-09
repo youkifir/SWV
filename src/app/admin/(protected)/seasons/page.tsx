@@ -7,6 +7,7 @@ export default function AdminSeasonsPage() {
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [loading, setLoading] = useState(true);
   const [newLabel, setNewLabel] = useState('');
+  const [newDeadline, setNewDeadline] = useState('');
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +32,7 @@ export default function AdminSeasonsPage() {
     const res = await fetch('/api/admin/seasons', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ label: newLabel.trim() }),
+      body: JSON.stringify({ label: newLabel.trim(), votingDeadline: newDeadline || null }),
     });
     const data = await res.json();
 
@@ -39,6 +40,7 @@ export default function AdminSeasonsPage() {
       setError(data.error ?? 'Не удалось создать сезон');
     } else {
       setNewLabel('');
+      setNewDeadline('');
       await load();
     }
     setCreating(false);
@@ -54,14 +56,23 @@ export default function AdminSeasonsPage() {
         </p>
       </div>
 
-      <form onSubmit={handleCreate} className="card row">
+      <form onSubmit={handleCreate} className="card stack">
         <input
           placeholder="Например, SWAG 2027"
           value={newLabel}
           onChange={(e) => setNewLabel(e.target.value)}
-          style={{ flex: 1 }}
         />
-        <button type="submit" disabled={creating || !newLabel.trim()}>
+        <div>
+          <label className="muted" style={{ display: 'block', marginBottom: 6, fontSize: 13 }}>
+            Дедлайн голосования (необязательно) — после него коды не активируются
+          </label>
+          <input
+            type="datetime-local"
+            value={newDeadline}
+            onChange={(e) => setNewDeadline(e.target.value)}
+          />
+        </div>
+        <button type="submit" disabled={creating || !newLabel.trim()} style={{ alignSelf: 'flex-start' }}>
           {creating ? 'Создаём…' : 'Открыть новый сезон'}
         </button>
       </form>

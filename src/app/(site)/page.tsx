@@ -3,10 +3,9 @@ import Image from 'next/image';
 
 const SECTIONS = [
   { href: '/awards', title: 'SWAG Awards', description: 'Голосование за номинации сервера', emoji: '🏆' },
-  { href: '/glossary', title: 'Глоссарий', description: 'Кто есть кто на сервере', emoji: '📖' },
   { href: '/iceberg', title: 'Айсберг', description: 'Чем глубже, тем инсайдернее', emoji: '🧊' },
   { href: '/history', title: 'История', description: 'Ключевые события сервера', emoji: '📜' },
-  { href: '/memes', title: 'Мемы', description: 'Локальная классика', emoji: '😂' },
+  { href: '/dota', title: 'Dota 2', description: 'Ранги участников сервера', emoji: '🎮' },
 ];
 
 export default function HomePage() {

@@ -16,6 +16,7 @@ const body = Manrope({
 export const metadata: Metadata = {
   title: 'SWV',
   description: 'SWAG Awards и жизнь сервера',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
 };
 
 // Скрипт выполняется до отрисовки страницы (blocking), чтобы не было

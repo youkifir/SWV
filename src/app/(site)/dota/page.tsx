@@ -18,9 +18,9 @@ export default function DotaPage() {
   const [refreshingId, setRefreshingId] = useState<string | null>(null);
   const [refreshedIds, setRefreshedIds] = useState<Set<string>>(new Set());
 
-  async function load(force = false) {
+  async function load() {
     setLoading(true);
-    const res = await fetch(`/api/dota${force ? '?force=1' : ''}`);
+    const res = await fetch('/api/dota');
     const data = await res.json();
     if (data.ok) setPlayers(data.players);
     setLoading(false);
@@ -39,6 +39,7 @@ export default function DotaPage() {
     });
     setRefreshedIds((prev) => new Set(prev).add(playerId));
     setRefreshingId(null);
+    await load();
   }
 
   return (
@@ -52,7 +53,7 @@ export default function DotaPage() {
       </div>
 
       <p className="muted" style={{ textAlign: 'center', marginBottom: 16, fontSize: 12 }}>
-        Ранг не совпадает с реальным? OpenDota обновляет данные с задержкой — нажми "Обновить"
+        Ранг не совпадает с реальным? OpenDota обновляет данные с задержкой — нажми «Обновить»
         у себя в списке и перезагрузи страницу через минуту-две.
       </p>
 

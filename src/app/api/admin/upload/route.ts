@@ -4,6 +4,12 @@ import { requireAdmin } from '@/lib/auth';
 
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 МБ
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const EXT_BY_TYPE: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/gif': 'gif',
+};
 
 // POST multipart/form-data { file }
 // Загружает картинку в Supabase Storage (бакет "images"), возвращает { url }.
@@ -30,7 +36,9 @@ export async function POST(req: NextRequest) {
   }
 
   const supabase = createServerClient();
-  const ext = file.name.split('.').pop() || 'jpg';
+  // Расширение берём из проверенного MIME-типа, а не из имени файла — так
+  // нельзя подсунуть путь/неожиданное расширение через filename.
+  const ext = EXT_BY_TYPE[file.type] ?? 'jpg';
   const path = `${crypto.randomUUID()}.${ext}`;
 
   const { error } = await supabase.storage.from('images').upload(path, file, {

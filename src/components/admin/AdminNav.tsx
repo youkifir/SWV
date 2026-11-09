@@ -11,7 +11,6 @@ const LINKS = [
   { href: '/admin/codes', label: 'Коды' },
   { href: '/admin/results', label: 'Результаты' },
   { href: '/admin/votes', label: 'Кто как голосовал' },
-  { href: '/admin/submissions', label: 'Заявки' },
   { href: '/admin/seasons', label: 'Сезоны' },
   { href: '/admin/dota', label: 'Dota 2' },
 ];
