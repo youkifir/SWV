@@ -7,10 +7,8 @@ import ThemeToggle from '@/components/ThemeToggle';
 
 const LINKS = [
   { href: '/awards', label: 'SWAG Awards' },
-  { href: '/glossary', label: 'Глоссарий' },
   { href: '/iceberg', label: 'Айсберг' },
   { href: '/history', label: 'История' },
-  { href: '/memes', label: 'Мемы' },
   { href: '/dota', label: 'Dota 2' },
 ];
 

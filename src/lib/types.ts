@@ -44,18 +44,10 @@ export type Vote = {
 
 export type NominationResult = {
   nomination: Nomination;
-  standings: { nominee: Nominee; voteCount: number }[]; // отсортировано по убыванию, топ-3
+  standings: { nominee: Nominee; voteCount: number }[]; // отсортировано по убыванию
 };
 
 export type ContentStatus = 'published' | 'pending' | 'rejected';
-
-export type Member = {
-  id: string;
-  name: string;
-  description: string | null;
-  avatar_url: string | null;
-  status: ContentStatus;
-};
 
 export type IcebergEntry = {
   id: string;
@@ -72,23 +64,4 @@ export type HistoryEvent = {
   description: string | null;
   image_url: string | null;
   status: ContentStatus;
-};
-
-export type Meme = {
-  id: string;
-  image_url: string;
-  caption: string | null;
-  status: ContentStatus;
-};
-
-export type SubmissionType = 'member' | 'iceberg' | 'history' | 'meme';
-
-export type Submission = {
-  id: string;
-  type: SubmissionType;
-  target_id: string | null;
-  payload: Record<string, unknown>;
-  submitter_name: string | null;
-  status: ContentStatus;
-  created_at: string;
 };

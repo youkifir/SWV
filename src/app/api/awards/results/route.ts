@@ -9,7 +9,7 @@ import { computeSeasonResults } from '@/lib/results';
 // Без seasonId — берёт текущий сезон.
 export async function GET(req: NextRequest) {
   const supabase = createServerClient();
-  let seasonId = req.nextUrl.searchParams.get('seasonId');
+  const seasonId = req.nextUrl.searchParams.get('seasonId');
 
   let season;
   if (seasonId) {
@@ -28,6 +28,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: true, published: false, season });
   }
 
-  const results = await computeSeasonResults(supabase, season.id, 3);
+  const results = await computeSeasonResults(supabase, season.id, 3, { activeOnly: true });
   return NextResponse.json({ ok: true, published: true, season, results });
 }

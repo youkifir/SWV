@@ -1,7 +1,10 @@
+import 'server-only';
+
 import { cookies } from 'next/headers';
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import bcrypt from 'bcryptjs';
 import { createServerClient } from '@/lib/supabase/server';
+import { getSessionSecret } from '@/lib/env';
 
 // Авторизация без OAuth и без паролей у голосующих — код в обмен на
 // подписанную httpOnly cookie. Подпись через HMAC на SESSION_SECRET,
@@ -12,8 +15,12 @@ const ADMIN_COOKIE = 'admin_session';
 const VOTER_MAX_AGE = 60 * 60 * 6; // 6 часов — с запасом на прохождение всех номинаций
 const ADMIN_MAX_AGE = 60 * 60 * 24 * 7; // неделя
 
+// Cookie должны быть Secure только на HTTPS (Vercel). На локальном
+// http-деве Secure-флаг помешал бы браузеру принимать их.
+const COOKIE_SECURE = process.env.NODE_ENV === 'production';
+
 function sign(value: string): string {
-  const sig = createHmac('sha256', process.env.SESSION_SECRET!).update(value).digest('hex');
+  const sig = createHmac('sha256', getSessionSecret()).update(value).digest('hex');
   return `${value}.${sig}`;
 }
 
@@ -22,7 +29,7 @@ function unsign(signed: string): string | null {
   if (i === -1) return null;
   const value = signed.slice(0, i);
   const sig = signed.slice(i + 1);
-  const expected = createHmac('sha256', process.env.SESSION_SECRET!).update(value).digest('hex');
+  const expected = createHmac('sha256', getSessionSecret()).update(value).digest('hex');
   const a = Buffer.from(sig);
   const b = Buffer.from(expected);
   if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
@@ -35,7 +42,7 @@ export async function createVoterSession(codeId: string) {
   const store = await cookies();
   store.set(VOTER_COOKIE, sign(codeId), {
     httpOnly: true,
-    secure: true,
+    secure: COOKIE_SECURE,
     sameSite: 'lax',
     maxAge: VOTER_MAX_AGE,
     path: '/',
@@ -57,7 +64,8 @@ export async function clearVoterSession() {
 // Пароль хранится как bcrypt-хэш в admin_settings.admin_password_hash.
 // Особый случай: если строки в admin_settings ещё нет, первый же успешный
 // POST /api/admin/login сохраняет введённый пароль как пароль админки —
-// отдельный скрипт для первичной настройки не нужен.
+// отдельный скрипт для первичной настройки не нужен. Если задан
+// BOOTSTRAP_ADMIN_PASSWORD, то первым входом считается только он.
 
 export async function validateAdminPassword(password: string): Promise<boolean> {
   const supabase = createServerClient();
@@ -74,7 +82,7 @@ export async function createAdminSession() {
   const store = await cookies();
   store.set(ADMIN_COOKIE, sign('admin'), {
     httpOnly: true,
-    secure: true,
+    secure: COOKIE_SECURE,
     sameSite: 'lax',
     maxAge: ADMIN_MAX_AGE,
     path: '/',

@@ -71,19 +71,10 @@ create table admin_settings (
 );
 
 -- ==========================================================
--- SWV: остальные разделы сайта (глоссарий, айсберг, история, мемы)
+-- SWV: остальные разделы сайта (айсберг, история)
 -- ==========================================================
 
 create type content_status as enum ('published', 'pending', 'rejected');
-
-create table members (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  description text,
-  avatar_url text,
-  status content_status not null default 'published',
-  created_at timestamptz not null default now()
-);
 
 create table iceberg_entries (
   id uuid primary key default gen_random_uuid(),
@@ -104,23 +95,15 @@ create table history_events (
   created_at timestamptz not null default now()
 );
 
-create table memes (
-  id uuid primary key default gen_random_uuid(),
-  image_url text not null,
-  caption text,
-  status content_status not null default 'published',
-  created_at timestamptz not null default now()
-);
+-- ==========================================================
+-- Dota 2: зарегистрированные игроки (ранг тянется с OpenDota)
+-- ==========================================================
 
-create table submissions (
+create table dota_players (
   id uuid primary key default gen_random_uuid(),
-  type text not null check (type in ('member', 'iceberg', 'history', 'meme')),
-  target_id uuid,
-  payload jsonb not null,
-  submitter_name text,
-  status content_status not null default 'pending',
-  created_at timestamptz not null default now(),
-  reviewed_at timestamptz
+  name text not null,
+  steam_account_id bigint not null unique,
+  created_at timestamptz not null default now()
 );
 
 create index on nominations (season_id);
@@ -131,7 +114,6 @@ create index on votes (code_id);
 create index on voter_codes (code);
 create index on iceberg_entries (level);
 create index on history_events (event_date);
-create index on submissions (status);
 
 alter table seasons enable row level security;
 alter table nominations enable row level security;
@@ -139,11 +121,9 @@ alter table nominees enable row level security;
 alter table voter_codes enable row level security;
 alter table votes enable row level security;
 alter table admin_settings enable row level security;
-alter table members enable row level security;
 alter table iceberg_entries enable row level security;
 alter table history_events enable row level security;
-alter table memes enable row level security;
-alter table submissions enable row level security;
+alter table dota_players enable row level security;
 
 -- Публично можно читать сезоны (для архива по годам) и активные номинации/номинантов
 create policy "public read seasons" on seasons for select using (true);
@@ -151,12 +131,9 @@ create policy "public read nominations" on nominations for select using (is_acti
 create policy "public read nominees" on nominees for select using (true);
 
 -- Публично можно читать только опубликованный контент разделов SWV
-create policy "public read members" on members for select using (status = 'published');
 create policy "public read iceberg" on iceberg_entries for select using (status = 'published');
 create policy "public read history" on history_events for select using (status = 'published');
-create policy "public read memes" on memes for select using (status = 'published');
--- submissions не читаются публично вообще (это очередь на модерацию,
--- видна только админу через service role key)
+-- dota_players не читается публично — страница /dota ходит через серверный API.
 
 -- Всё остальное (коды, голоса, пароль, запись/изменение чего-либо)
 -- идёт только через серверные route'ы с service role key, обходящим RLS.

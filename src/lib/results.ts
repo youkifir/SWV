@@ -4,15 +4,24 @@ import type { NominationResult } from '@/lib/types';
 // Считает расклад голосов по всем номинациям сезона.
 // topN ограничивает список кандидатов на выходе (для публичной страницы
 // нужен топ-3, для админки — передать Infinity, чтобы видеть всех).
+// options.activeOnly оставляет только активные номинации (для публичных результатов).
 export async function computeSeasonResults(
   supabase: SupabaseClient,
   seasonId: string,
-  topN: number = Infinity
-): Promise<NominationResult[]> {  const { data: nominations } = await supabase
+  topN: number = Infinity,
+  options: { activeOnly?: boolean } = {}
+): Promise<NominationResult[]> {
+  let query = supabase
     .from('nominations')
     .select('*, nominees(*)')
     .eq('season_id', seasonId)
     .order('sort_order', { ascending: true });
+
+  if (options.activeOnly) {
+    query = query.eq('is_active', true);
+  }
+
+  const { data: nominations } = await query;
 
   if (!nominations || nominations.length === 0) return [];
 

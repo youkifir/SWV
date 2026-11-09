@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
-import { requestDotaRefresh } from '@/lib/dota';
+import { requestDotaRefresh, clearDotaCache } from '@/lib/dota';
 
 // POST { playerId } — просит OpenDota пересобрать данные игрока (по id
 // из нашей таблицы dota_players, не по голому Steam ID — так не дёргают
@@ -25,5 +25,8 @@ export async function POST(req: NextRequest) {
   }
 
   const ok = await requestDotaRefresh(player.steam_account_id);
+  if (ok) {
+    clearDotaCache(player.steam_account_id);
+  }
   return NextResponse.json({ ok });
 }
