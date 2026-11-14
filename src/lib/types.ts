@@ -6,6 +6,7 @@ export type Season = {
   is_current: boolean;
   voting_deadline: string | null;
   results_published: boolean;
+  is_archive?: boolean;
 };
 
 export type Nomination = {
@@ -24,6 +25,8 @@ export type Nominee = {
   name: string;
   avatar_url: string | null;
   sort_order: number;
+  place?: number | null;
+  archive_votes?: number | null;
 };
 
 export type VoterCode = {
@@ -45,6 +48,7 @@ export type Vote = {
 export type NominationResult = {
   nomination: Nomination;
   standings: { nominee: Nominee; voteCount: number }[]; // отсортировано по убыванию
+  archive?: boolean; // архивный сезон: места заданы вручную, голоса могут быть неизвестны
 };
 
 export type ContentStatus = 'published' | 'pending' | 'rejected';

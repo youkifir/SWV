@@ -1,12 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { fetchDotaPlayer } from '@/lib/dota';
 
-// GET ?force=1 — лидерборд по всем зарегистрированным игрокам, отсортированный
+// GET — лидерборд по всем зарегистрированным игрокам, отсортированный
 // по рангу. Данные подтягиваются с OpenDota (in-memory кэш на 5 минут,
-// force=1 пропускает кэш), никакого ручного ввода ММР.
-export async function GET(req: NextRequest) {
-  const force = req.nextUrl.searchParams.get('force') === '1';
+// сбрасывается кнопкой «Обновить все» через /api/dota/refresh), никакого ручного ввода ММР.
+export async function GET() {
   const supabase = createServerClient();
   const { data: players, error } = await supabase.from('dota_players').select('*');
 
@@ -15,7 +14,7 @@ export async function GET(req: NextRequest) {
   }
 
   const stats = await Promise.all(
-    (players ?? []).map((p) => fetchDotaPlayer(p.id, p.name, p.steam_account_id, { force }))
+    (players ?? []).map((p) => fetchDotaPlayer(p.id, p.name, p.steam_account_id))
   );
 
   stats.sort((a, b) => b.rankValue - a.rankValue);

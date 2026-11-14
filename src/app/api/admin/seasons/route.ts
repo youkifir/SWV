@@ -73,3 +73,29 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ ok: true, season: data });
 }
+
+// DELETE { id } — удалить АРХИВНЫЙ сезон (со всеми его номинациями и номинантами).
+// Обычные сезоны с кодами и голосами удалить нельзя — только архивные.
+export async function DELETE(req: NextRequest) {
+  if (!(await requireAdmin())) {
+    return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const body = await req.json().catch(() => null);
+  const id = body?.id;
+  if (!id || typeof id !== 'string') {
+    return NextResponse.json({ ok: false, error: 'Нужен id' }, { status: 400 });
+  }
+
+  const supabase = createServerClient();
+  const { data: season } = await supabase.from('seasons').select('is_archive').eq('id', id).maybeSingle();
+  if (!season?.is_archive) {
+    return NextResponse.json({ ok: false, error: 'Удалять можно только архивные сезоны' }, { status: 400 });
+  }
+
+  const { error } = await supabase.from('seasons').delete().eq('id', id);
+  if (error) {
+    return NextResponse.json({ ok: false, error: 'Не удалось удалить сезон' }, { status: 500 });
+  }
+  return NextResponse.json({ ok: true });
+}

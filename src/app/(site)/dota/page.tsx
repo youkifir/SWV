@@ -15,14 +15,18 @@ function StarDots({ count }: { count: number }) {
 export default function DotaPage() {
   const [players, setPlayers] = useState<DotaPlayerStats[]>([]);
   const [loading, setLoading] = useState(true);
-  const [refreshingId, setRefreshingId] = useState<string | null>(null);
-  const [refreshedIds, setRefreshedIds] = useState<Set<string>>(new Set());
+  const [refreshing, setRefreshing] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(false);
 
   async function load() {
-    setLoading(true);
-    const res = await fetch('/api/dota');
-    const data = await res.json();
-    if (data.ok) setPlayers(data.players);
+    try {
+      const res = await fetch('/api/dota');
+      const data = await res.json();
+      if (data.ok) setPlayers(data.players);
+    } catch {
+      // оставляем прежний список
+    }
     setLoading(false);
   }
 
@@ -30,16 +34,28 @@ export default function DotaPage() {
     load();
   }, []);
 
-  async function handleRefresh(playerId: string) {
-    setRefreshingId(playerId);
-    await fetch('/api/dota/refresh', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ playerId }),
-    });
-    setRefreshedIds((prev) => new Set(prev).add(playerId));
-    setRefreshingId(null);
-    await load();
+  // Одна кнопка на всех: просим OpenDota обновить всех игроков, через пару секунд
+  // перечитываем список. OpenDota собирает данные не мгновенно, поэтому через
+  // минуту-две можно нажать ещё раз, если ранг не поменялся.
+  async function handleRefreshAll() {
+    setRefreshing(true);
+    setNotice(null);
+    try {
+      const res = await fetch('/api/dota/refresh', { method: 'POST' });
+      const data = await res.json();
+      if (!data.ok) {
+        setNotice(data.error ?? 'Не удалось запросить обновление');
+      } else {
+        setNotice('Запрос отправлен. OpenDota обновляет данные до пары минут — если ранг не изменился, нажми ещё раз позже.');
+        setCooldown(true);
+        setTimeout(() => setCooldown(false), 60_000);
+        await new Promise((r) => setTimeout(r, 4000));
+        await load();
+      }
+    } catch {
+      setNotice('Не удалось связаться с сервером');
+    }
+    setRefreshing(false);
   }
 
   return (
@@ -52,10 +68,12 @@ export default function DotaPage() {
         <p className="muted" style={{ marginTop: 8 }}>Обновляется автоматически из статистики OpenDota</p>
       </div>
 
-      <p className="muted" style={{ textAlign: 'center', marginBottom: 16, fontSize: 12 }}>
-        Ранг не совпадает с реальным? OpenDota обновляет данные с задержкой — нажми «Обновить»
-        у себя в списке и перезагрузи страницу через минуту-две.
-      </p>
+      <div style={{ textAlign: 'center', marginBottom: 24 }}>
+        <button onClick={handleRefreshAll} disabled={refreshing || cooldown}>
+          {refreshing ? 'Обновляем…' : cooldown ? '✓ Запрошено' : '🔄 Обновить все ранги'}
+        </button>
+        {notice && <p className="muted" style={{ marginTop: 10, fontSize: 12 }}>{notice}</p>}
+      </div>
 
       {loading ? (
         <p className="muted" style={{ textAlign: 'center' }}>Загружаем…</p>
@@ -95,14 +113,6 @@ export default function DotaPage() {
                     <p className="muted">Ранг не виден (скрыт в настройках Steam/Dota)</p>
                   )}
                 </div>
-                <button
-                  className="secondary"
-                  style={{ padding: '6px 10px', fontSize: 12 }}
-                  disabled={refreshingId === player.id}
-                  onClick={() => handleRefresh(player.id)}
-                >
-                  {refreshedIds.has(player.id) ? '✓ Запрошено' : refreshingId === player.id ? '…' : 'Обновить'}
-                </button>
               </div>
             </div>
           ))}
