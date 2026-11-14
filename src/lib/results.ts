@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { NominationResult } from '@/lib/types';
+import type { NominationResult, Nominee } from '@/lib/types';
 
 // Считает расклад голосов по всем номинациям сезона.
 // topN ограничивает список кандидатов на выходе (для публичной страницы
@@ -9,7 +9,7 @@ export async function computeSeasonResults(
   supabase: SupabaseClient,
   seasonId: string,
   topN: number = Infinity,
-  options: { activeOnly?: boolean } = {}
+  options: { activeOnly?: boolean; archive?: boolean } = {}
 ): Promise<NominationResult[]> {
   let query = supabase
     .from('nominations')
@@ -43,6 +43,16 @@ export async function computeSeasonResults(
   return nominations.map((nomination) => {
     const { nominees, ...nominationFields } = nomination;
     const counts = countsByNomination.get(nomination.id) ?? new Map();
+
+    // Архивный сезон: порядок задан вручную полем place (1-3), голосов в базе нет.
+    if (options.archive) {
+      const placed = ((nominees ?? []) as Nominee[])
+        .filter((n) => n.place != null)
+        .sort((a, b) => (a.place ?? 99) - (b.place ?? 99))
+        .map((nominee) => ({ nominee, voteCount: nominee.archive_votes ?? 0 }))
+        .slice(0, topN);
+      return { nomination: nominationFields, standings: placed, archive: true };
+    }
 
     const standings = (nominees ?? [])
       .map((nominee: { id: string }) => ({

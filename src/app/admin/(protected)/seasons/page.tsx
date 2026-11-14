@@ -46,6 +46,18 @@ export default function AdminSeasonsPage() {
     setCreating(false);
   }
 
+  async function handleDelete(id: string, label: string) {
+    if (!confirm(`Удалить архивный сезон «${label}» вместе со всеми номинациями?`)) return;
+    const res = await fetch('/api/admin/seasons', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    });
+    const data = await res.json().catch(() => null);
+    if (!data?.ok) setError(data?.error ?? 'Не удалось удалить сезон');
+    await load();
+  }
+
   return (
     <div className="stack" style={{ gap: 24 }}>
       <div>
@@ -88,7 +100,13 @@ export default function AdminSeasonsPage() {
                 <p style={{ fontWeight: 500 }}>{season.label}</p>
                 {season.is_current && <span className="pill accent">текущий</span>}
                 {season.results_published && <span className="pill">результаты опубликованы</span>}
+                {season.is_archive && <span className="pill">архив</span>}
               </div>
+              {season.is_archive && (
+                <button className="danger" style={{ padding: '4px 10px', fontSize: 12 }} onClick={() => handleDelete(season.id, season.label)}>
+                  Удалить
+                </button>
+              )}
             </div>
           ))}
           {seasons.length === 0 && <p className="muted">Сезонов пока нет — создайте первый выше.</p>}

@@ -28,6 +28,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: true, published: false, season });
   }
 
-  const results = await computeSeasonResults(supabase, season.id, 3, { activeOnly: true });
+  const results = await computeSeasonResults(supabase, season.id, 3, {
+    activeOnly: true,
+    archive: Boolean(season.is_archive),
+  });
   return NextResponse.json({ ok: true, published: true, season, results });
 }

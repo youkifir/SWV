@@ -18,8 +18,12 @@ export default function ResultsPage() {
         .from('seasons')
         .select('*')
         .order('created_at', { ascending: false });
-      setSeasons(data ?? []);
-      const current = data?.find((s) => s.is_current) ?? data?.[0];
+      // текущий сезон первым, дальше по названию (SWAG 2025, SWAG 2024, …)
+      const list = [...(data ?? [])].sort(
+        (a, b) => Number(b.is_current) - Number(a.is_current) || b.label.localeCompare(a.label, 'ru', { numeric: true })
+      );
+      setSeasons(list);
+      const current = list.find((s) => s.is_current) ?? list[0];
       if (current) setSeasonId(current.id);
       else setLoading(false);
     }
@@ -30,10 +34,15 @@ export default function ResultsPage() {
     if (!seasonId) return;
     async function loadResults() {
       setLoading(true);
-      const res = await fetch(`/api/awards/results?seasonId=${seasonId}`);
-      const data = await res.json();
-      setPublished(Boolean(data.published));
-      setResults(data.results ?? null);
+      try {
+        const res = await fetch(`/api/awards/results?seasonId=${seasonId}`);
+        const data = await res.json();
+        setPublished(Boolean(data.published));
+        setResults(data.results ?? null);
+      } catch {
+        setPublished(false);
+        setResults(null);
+      }
       setLoading(false);
     }
     loadResults();

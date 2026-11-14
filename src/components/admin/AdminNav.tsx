@@ -12,6 +12,8 @@ const LINKS = [
   { href: '/admin/results', label: 'Результаты' },
   { href: '/admin/votes', label: 'Кто как голосовал' },
   { href: '/admin/seasons', label: 'Сезоны' },
+  { href: '/admin/archive', label: 'Архив наград' },
+  { href: '/admin/iceberg', label: 'Айсберг' },
   { href: '/admin/dota', label: 'Dota 2' },
 ];
 

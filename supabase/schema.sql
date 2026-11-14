@@ -14,6 +14,7 @@ create table seasons (
   is_current boolean not null default false,
   voting_deadline timestamptz,
   results_published boolean not null default false,
+  is_archive boolean not null default false, -- прошлый год, внесённый вручную (без голосования)
   created_at timestamptz not null default now()
 );
 
@@ -39,6 +40,8 @@ create table nominees (
   name text not null,
   avatar_url text,
   sort_order int not null default 0,
+  place smallint check (place between 1 and 3), -- только для архива: место 1-3
+  archive_votes int check (archive_votes >= 0), -- только для архива: число голосов, если известно
   created_at timestamptz not null default now()
 );
 
