@@ -1,6 +1,7 @@
 'use client';
 
 import type { Nomination, Nominee } from '@/lib/types';
+import { fitFontSize } from '@/lib/text';
 
 type Props = {
   nomination: Nomination;
@@ -19,7 +20,7 @@ export default function NominationCard({ nomination, nominees, selectedId, onSel
           style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 8 }}
         />
       )}
-      <h2 style={{ fontSize: 22 }}>{nomination.title}</h2>
+      <h2 style={{ fontSize: fitFontSize(nomination.title, 24), lineHeight: 1.2, overflowWrap: 'anywhere' }}>{nomination.title}</h2>
       {nomination.description && <p className="muted">{nomination.description}</p>}
 
       <div className="stack" style={{ gap: 8 }}>
@@ -45,10 +46,12 @@ export default function NominationCard({ nomination, nominees, selectedId, onSel
               <img
                 src={nominee.avatar_url}
                 alt=""
-                style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover' }}
+                style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
               />
             )}
-            <span>{nominee.name}</span>
+            <span style={{ flex: 1, minWidth: 0, overflowWrap: 'anywhere', lineHeight: 1.25, fontSize: fitFontSize(nominee.name, 16) }}>
+              {nominee.name}
+            </span>
           </label>
         ))}
       </div>

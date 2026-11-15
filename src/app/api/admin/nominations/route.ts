@@ -50,12 +50,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: 'Нужны seasonId и title' }, { status: 400 });
   }
 
+  if (typeof title !== 'string' || !title.trim() || title.length > 150) {
+    return NextResponse.json({ ok: false, error: 'Название — от 1 до 150 символов' }, { status: 400 });
+  }
+
   const supabase = createServerClient();
+  const { data: last } = await supabase
+    .from('nominations')
+    .select('sort_order')
+    .eq('season_id', seasonId)
+    .order('sort_order', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
   const { data, error } = await supabase
     .from('nominations')
     .insert({
       season_id: seasonId,
-      title,
+      sort_order: (last?.sort_order ?? -1) + 1,
+      title: title.trim(),
       description: description ?? null,
       cover_image_url: coverImageUrl ?? null,
     })
@@ -80,8 +93,12 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ ok: false, error: 'Нужен id' }, { status: 400 });
   }
 
+  if (title !== undefined && (typeof title !== 'string' || !title.trim() || title.length > 150)) {
+    return NextResponse.json({ ok: false, error: 'Название — от 1 до 150 символов' }, { status: 400 });
+  }
+
   const update: Record<string, unknown> = {};
-  if (title !== undefined) update.title = title;
+  if (title !== undefined) update.title = title.trim();
   if (description !== undefined) update.description = description;
   if (coverImageUrl !== undefined) update.cover_image_url = coverImageUrl;
   if (isActive !== undefined) update.is_active = isActive;

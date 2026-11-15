@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { requireAdmin } from '@/lib/auth';
-import { parseArchiveText } from '@/lib/archive';
+import { parseArchiveText, type ArchiveNomination } from '@/lib/archive';
 
-// POST { label: string, text: string } — создаёт архивный сезон (не текущий,
+// POST { label: string, text?: string } — создаёт архивный сезон (не текущий,
 // результаты сразу опубликованы) с номинациями и победителями (места 1-3).
 export async function POST(req: NextRequest) {
   if (!(await requireAdmin())) {
@@ -21,7 +21,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: 'Текст слишком длинный' }, { status: 400 });
   }
 
-  const parsed = parseArchiveText(text);
+  const parsed: { ok: true; nominations: ArchiveNomination[] } | { ok: false; error: string } = text.trim()
+    ? parseArchiveText(text)
+    : { ok: true, nominations: [] };
   if (!parsed.ok) {
     return NextResponse.json({ ok: false, error: parsed.error }, { status: 400 });
   }
@@ -41,6 +43,10 @@ export async function POST(req: NextRequest) {
   const rollback = async () => {
     await supabase.from('seasons').delete().eq('id', season.id); // каскадом удалит номинации и номинантов
   };
+
+  if (parsed.nominations.length === 0) {
+    return NextResponse.json({ ok: true, season, nominations: 0, winners: 0 });
+  }
 
   const { data: nominations, error: nomError } = await supabase
     .from('nominations')

@@ -99,3 +99,36 @@ export async function DELETE(req: NextRequest) {
   }
   return NextResponse.json({ ok: true });
 }
+
+// PATCH { id, label?, resultsPublished? } — переименовать сезон / показать или скрыть результаты на сайте
+export async function PATCH(req: NextRequest) {
+  if (!(await requireAdmin())) {
+    return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const body = await req.json().catch(() => null);
+  const { id, label, resultsPublished } = body ?? {};
+  if (!id || typeof id !== 'string') {
+    return NextResponse.json({ ok: false, error: 'Нужен id' }, { status: 400 });
+  }
+
+  const update: Record<string, unknown> = {};
+  if (label !== undefined) {
+    if (typeof label !== 'string' || !label.trim() || label.trim().length > 80) {
+      return NextResponse.json({ ok: false, error: 'Название сезона — от 1 до 80 символов' }, { status: 400 });
+    }
+    update.label = label.trim();
+  }
+  if (resultsPublished !== undefined) update.results_published = Boolean(resultsPublished);
+  if (Object.keys(update).length === 0) {
+    return NextResponse.json({ ok: false, error: 'Нечего обновлять' }, { status: 400 });
+  }
+
+  const supabase = createServerClient();
+  const { data, error } = await supabase.from('seasons').update(update).eq('id', id).select().single();
+  if (error) {
+    console.error('season update error:', error);
+    return NextResponse.json({ ok: false, error: 'Не удалось обновить сезон' }, { status: 500 });
+  }
+  return NextResponse.json({ ok: true, season: data });
+}

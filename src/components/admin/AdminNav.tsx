@@ -7,12 +7,12 @@ import ThemeToggle from '@/components/ThemeToggle';
 
 const LINKS = [
   { href: '/admin', label: 'Дашборд' },
-  { href: '/admin/nominations', label: 'Номинации' },
+  { href: '/admin/nominations', label: 'Номинации: текущий сезон' },
+  { href: '/admin/archive', label: 'Номинации: прошлые года' },
   { href: '/admin/codes', label: 'Коды' },
   { href: '/admin/results', label: 'Результаты' },
   { href: '/admin/votes', label: 'Кто как голосовал' },
   { href: '/admin/seasons', label: 'Сезоны' },
-  { href: '/admin/archive', label: 'Архив наград' },
   { href: '/admin/iceberg', label: 'Айсберг' },
   { href: '/admin/dota', label: 'Dota 2' },
 ];
