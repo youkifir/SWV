@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import ScrollReveal from '@/components/ScrollReveal';
 import type { IcebergEntry } from '@/lib/types';
+import Icon from '@/components/Icon';
 
 // Нарисованный айсберг: верхушка над водой + большая подводная часть,
 // на которой по уровням (от поверхностного к самому глубокому) лежат записи.
@@ -55,7 +56,7 @@ export default function IcebergPage() {
   return (
     <main>
       <div style={{ textAlign: 'center', padding: '56px 24px 24px' }}>
-        <span className="pill accent">🧊 Айсберг сервера</span>
+        <span className="pill accent"><Icon name="iceberg" size={14} /> Айсберг сервера</span>
         <h1 className="gradient-text" style={{ fontSize: 'clamp(32px, 6vw, 48px)', marginTop: 16 }}>
           Чем глубже, тем инсайдернее
         </h1>
@@ -63,15 +64,18 @@ export default function IcebergPage() {
       </div>
 
       {/* Небо + верхушка */}
-      <div style={{ background: 'linear-gradient(#6fc0ee, #d6f0ff)', paddingTop: 40 }}>
+      {/* Сцена вырастает из фона сайта: сверху цвет страницы, ниже ночное небо */}
+      <div style={{ background: 'linear-gradient(var(--bg) 0%, #14263f 50%, #24476f 100%)', paddingTop: 72 }}>
         <Tip />
       </div>
+      {/* Линия воды — золотая, как акцент сайта */}
+      <div aria-hidden style={{ height: 2, background: 'linear-gradient(90deg, transparent, var(--accent), transparent)' }} />
 
       {/* Вода + подводная часть */}
       <div
         style={{
           position: 'relative',
-          background: 'linear-gradient(#0d6aa3 0%, #07345f 45%, #020b1c 100%)',
+          background: 'linear-gradient(#24476f 0%, #10243f 40%, #0a1626 75%, var(--bg) 100%)',
           minHeight: 520,
           padding: '0 0 120px',
           overflow: 'hidden',
@@ -87,7 +91,7 @@ export default function IcebergPage() {
             <linearGradient id="bodyA" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#d9f2ff" />
               <stop offset="35%" stopColor="#7fbbe6" />
-              <stop offset="100%" stopColor="#1d4f8f" />
+              <stop offset="100%" stopColor="#1a3a66" />
             </linearGradient>
           </defs>
           <polygon

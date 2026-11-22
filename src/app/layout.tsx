@@ -1,14 +1,14 @@
 import type { Metadata } from 'next';
-import { Unbounded, Manrope } from 'next/font/google';
+import { Playfair_Display, Inter } from 'next/font/google';
 import '@/styles/globals.css';
 
-const displayFont = Unbounded({
+const displayFont = Playfair_Display({
   subsets: ['latin', 'cyrillic'],
   variable: '--font-display',
-  weight: ['500', '600', '700'],
+  weight: ['600', '700', '800'],
 });
 
-const body = Manrope({
+const body = Inter({
   subsets: ['latin', 'cyrillic'],
   variable: '--font-body',
 });

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import ImagePicker from './ImagePicker';
 import { adminFetch } from '@/lib/adminFetch';
+import { PlaceBadge } from '@/components/Icon';
 import type { Nominee } from '@/lib/types';
 
 type Props = {
@@ -14,14 +15,10 @@ type Props = {
 
 const PLACES = [
   { value: '', label: 'без места' },
-  { value: '1', label: '🥇 1 место' },
-  { value: '2', label: '🥈 2 место' },
-  { value: '3', label: '🥉 3 место' },
+  { value: '1', label: '1 место' },
+  { value: '2', label: '2 место' },
+  { value: '3', label: '3 место' },
 ];
-
-function placeBadge(place?: number | null) {
-  return place === 1 ? '🥇' : place === 2 ? '🥈' : place === 3 ? '🥉' : '';
-}
 
 export default function NomineeManager({ nominationId, nominees, archive, onChange }: Props) {
   const sorted = [...nominees].sort((a, b) =>
@@ -122,7 +119,7 @@ export default function NomineeManager({ nominationId, nominees, archive, onChan
             <div className="row" style={{ minWidth: 0 }}>
               {n.avatar_url && <img src={n.avatar_url} alt="" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />}
               <span style={{ overflowWrap: 'anywhere' }}>
-                {archive && placeBadge(n.place) && <span>{placeBadge(n.place)} </span>}
+                {archive && n.place ? <><PlaceBadge place={n.place} size={20} />{' '}</> : null}
                 {n.name}
                 {archive && n.archive_votes != null && <span className="muted"> · {n.archive_votes} гол.</span>}
               </span>

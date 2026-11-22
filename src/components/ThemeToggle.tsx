@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/Icon';
 import { useEffect, useState } from 'react';
 
 export default function ThemeToggle() {
@@ -19,7 +20,7 @@ export default function ThemeToggle() {
 
   return (
     <button type="button" className="theme-toggle" onClick={toggle} aria-label="Переключить тему">
-      {theme === 'dark' ? '☀️' : '🌙'}
+      <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
     </button>
   );
 }

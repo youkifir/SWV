@@ -1,47 +1,50 @@
-/* SWV — современная яркая палитра: почти-чёрный фон, градиент
-   фиолетовый→розовый как фирменный акцент, лаймовый как искра для
-   мелких хайлайтов. Крупный geometric-шрифт Unbounded для заголовков —
-   даёт тот самый "вау" на больших надписях. Тема переключается
-   атрибутом data-theme на <html> ("dark" | "light"), по умолчанию тёмная. */
+/* SWV — «золотой гала»: тёплый почти-чёрный фон, золото как фирменный акцент,
+   кремовый текст, винный (бордовый) для плашек — перекликается с красным знаком.
+   Заголовки — Playfair Display, текст — Inter. Тема переключается атрибутом
+   data-theme на <html> ("dark" | "light"), по умолчанию тёмная. */
 
 :root,
 [data-theme='dark'] {
-  --bg: #0b0b12;
-  --surface: rgba(255, 255, 255, 0.04);
-  --surface-raised: rgba(255, 255, 255, 0.07);
-  --border: rgba(255, 255, 255, 0.1);
-  --text: #f5f4fb;
-  --text-muted: #9694ab;
-  --accent-1: #8b5cf6;
-  --accent-2: #ec4899;
-  --accent: #a370ff;
-  --accent-strong: #b989ff;
-  --accent-contrast: #0b0b12;
-  --spark: #d6ff3f;
-  --danger: #ff6b6b;
+  --bg: #0e0c0a;
+  --surface: #17130f;
+  --surface-raised: #1f1913;
+  --border: #3a2f1e;
+  --text: #f3ebdd;
+  --text-muted: #a89c86;
+  --accent-1: #e3c779;
+  --accent-2: #c9a24b;
+  --accent: #c9a24b;
+  --accent-strong: #e3c779;
+  --accent-contrast: #0e0c0a;
+  --wine-1: #3a1018;
+  --wine-2: #220a10;
+  --spark: #e3c779;
+  --danger: #ff7a7a;
   --success: #4ade80;
-  --radius: 18px;
-  --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
-  --font-display: 'Unbounded', system-ui, sans-serif;
-  --font-body: 'Manrope', system-ui, -apple-system, sans-serif;
+  --radius: 12px;
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 [data-theme='light'] {
-  --bg: #f7f6fb;
+  --bg: #f8f3e8;
   --surface: #ffffff;
-  --surface-raised: #f0edf9;
-  --border: #e4e0f2;
-  --text: #17151f;
-  --text-muted: #6d6a80;
-  --accent-1: #7c3aed;
-  --accent-2: #db2777;
-  --accent: #7c3aed;
-  --accent-strong: #6d28d9;
-  --accent-contrast: #fff;
-  --spark: #84cc16;
-  --danger: #dc2626;
-  --success: #16a34a;
-  --shadow: 0 8px 24px rgba(124, 58, 237, 0.12);
+  --surface-raised: #f1e9d6;
+  --border: #e2d5b8;
+  --text: #241c10;
+  --text-muted: #6d5f46;
+  --accent-1: #b8892c;
+  --accent-2: #8f6718;
+  --accent: #9a6f1c;
+  --accent-strong: #7a5712;
+  --accent-contrast: #ffffff;
+  --wine-1: #5a1a27;
+  --wine-2: #3a0f19;
+  --spark: #8f6718;
+  --danger: #c62828;
+  --success: #15803d;
+  --shadow: 0 8px 24px rgba(120, 90, 30, 0.14);
 }
 
 * {
@@ -60,15 +63,15 @@ html, body {
 
 [data-theme='dark'] body {
   background-image:
-    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(139, 92, 246, 0.25), transparent),
-    radial-gradient(ellipse 700px 500px at 100% 0%, rgba(236, 72, 153, 0.18), transparent);
+    radial-gradient(ellipse 900px 420px at 50% -5%, rgba(201, 162, 75, 0.16), transparent),
+    radial-gradient(ellipse 600px 400px at 100% 0%, rgba(122, 12, 31, 0.14), transparent);
   background-attachment: fixed;
 }
 
 h1, h2, h3 {
   font-family: var(--font-display);
-  font-weight: 500;
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  letter-spacing: 0;
   line-height: 1.15;
   margin: 0;
 }
@@ -86,7 +89,7 @@ button, input, textarea, select {
 input, textarea, select {
   background: var(--surface-raised);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 10px 12px;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
@@ -94,25 +97,27 @@ input, textarea, select {
 
 input:focus, textarea:focus, select:focus {
   border-color: var(--accent-1);
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
 button {
   cursor: pointer;
   border: none;
-  border-radius: 999px;
+  border-radius: 8px;
   padding: 11px 20px;
   font-weight: 600;
   font-size: 14px;
-  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-  color: #fff;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
-  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.35);
+  letter-spacing: 0.04em;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
 button:hover {
+  background: var(--accent-strong);
   transform: translateY(-1px);
-  box-shadow: 0 6px 22px rgba(139, 92, 246, 0.45);
+  box-shadow: 0 6px 22px color-mix(in srgb, var(--accent) 40%, transparent);
 }
 
 button:active {
@@ -135,6 +140,7 @@ button.secondary {
 
 button.secondary:hover {
   background: var(--border);
+  transform: none;
   box-shadow: none;
 }
 
@@ -219,8 +225,8 @@ button.danger:hover {
 
 .pill.accent {
   color: var(--text);
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(236, 72, 153, 0.25));
-  border-color: transparent;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
 /* Градиентный текст — для заголовков, ради которых всё это затевалось */
@@ -239,40 +245,69 @@ button.danger:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 24px;
-  border-bottom: 1px solid var(--border);
   flex-wrap: wrap;
   gap: 12px;
-  background: color-mix(in srgb, var(--bg) 75%, transparent);
-  backdrop-filter: blur(16px);
+  padding: 20px 40px;
+  background: transparent;
+  border-bottom: 1px solid transparent;
   transform: translateY(0);
-  transition: transform 0.25s ease;
+  transition: transform 0.25s ease, background 0.2s ease, border-color 0.2s ease, padding 0.2s ease;
+}
+
+/* Плотный фон появляется только когда страница прокручена */
+.site-header--solid {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom-color: var(--border);
 }
 
 .site-header--hidden {
   transform: translateY(-100%);
 }
 
+.site-header-right {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
 .site-header-links {
   display: flex;
-  gap: 4px;
+  gap: 28px;
   flex-wrap: wrap;
 }
 
 .site-header-links a {
-  padding: 8px 14px;
-  border-radius: 999px;
+  padding: 6px 0;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--text-muted);
-  transition: background 0.15s ease, color 0.15s ease;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
-.site-header-links a:hover {
-  background: var(--surface-raised);
-  color: var(--text);
+.site-header-links a:hover,
+.site-header-links a[aria-current='page'] {
+  color: var(--accent-strong);
+  border-bottom-color: var(--accent);
 }
+
+@media (max-width: 720px) {
+  .site-header {
+    padding: 14px 16px;
+  }
+  .site-header-right,
+  .site-header-links {
+    gap: 14px;
+  }
+}
+
 
 .theme-toggle {
   background: var(--surface-raised);

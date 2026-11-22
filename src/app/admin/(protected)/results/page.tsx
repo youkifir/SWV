@@ -77,7 +77,7 @@ export default function AdminResultsPage() {
             <div className="stack" style={{ gap: 6 }}>
               {result.standings.map((entry, i) => (
                 <div key={entry.nominee.id} className="spread" style={{ fontSize: 14 }}>
-                  <span>{i === 0 ? '🏆 ' : `${i + 1}. `}{entry.nominee.name}</span>
+                  <span>{`${i + 1}. `}{entry.nominee.name}</span>
                   <span className="muted">{entry.voteCount} голосов</span>
                 </div>
               ))}

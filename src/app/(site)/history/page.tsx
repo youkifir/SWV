@@ -1,5 +1,6 @@
 import CanvaEmbed from '@/components/CanvaEmbed';
 import ScrollReveal from '@/components/ScrollReveal';
+import Icon from '@/components/Icon';
 
 // Главы истории сервера. Чтобы добавить новую — просто добавь объект
 // в этот массив. embedUrl бери из Canva: Поделиться → Экспорт → Встроить.
@@ -17,7 +18,7 @@ export default function HistoryPage() {
   return (
     <main style={{ minHeight: '100vh', padding: '48px 24px', maxWidth: 700, margin: '0 auto' }}>
       <div style={{ textAlign: 'center', marginBottom: 40 }}>
-        <span className="pill accent">📜 История сервера</span>
+        <span className="pill accent"><Icon name="scroll" size={14} /> История сервера</span>
         <h1 className="gradient-text" style={{ fontSize: 'clamp(32px, 6vw, 48px)', marginTop: 16 }}>
           Как всё начиналось
         </h1>

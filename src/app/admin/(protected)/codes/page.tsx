@@ -64,7 +64,7 @@ export default function AdminCodesPage() {
         <div className="spread">
           <p className="muted">Список ниже — только неиспользованные копируются одной кнопкой</p>
           <button className="secondary" onClick={copyUnused}>
-            {copied ? 'Скопировано ✓' : `Скопировать неиспользованные (${codes.length - usedCount})`}
+            {copied ? 'Скопировано' : `Скопировать неиспользованные (${codes.length - usedCount})`}
           </button>
         </div>
       )}

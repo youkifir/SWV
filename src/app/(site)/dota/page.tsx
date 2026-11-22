@@ -2,12 +2,17 @@
 
 import { useEffect, useState } from 'react';
 import type { DotaPlayerStats } from '@/lib/dota';
+import Icon from '@/components/Icon';
 
 function StarDots({ count }: { count: number }) {
   return (
-    <span style={{ letterSpacing: 1 }}>
-      {'★'.repeat(count)}
-      <span style={{ opacity: 0.25 }}>{'★'.repeat(Math.max(0, 5 - count))}</span>
+    <span style={{ display: 'inline-flex', gap: 2, verticalAlign: 'middle' }}>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <span key={i} style={{ display: 'inline-flex', opacity: i < count ? 1 : 0.25 }}>
+          <Icon name="star" size={13} />
+        </span>
+      ))}
+      
     </span>
   );
 }
@@ -61,7 +66,7 @@ export default function DotaPage() {
   return (
     <main style={{ minHeight: '100vh', padding: '48px 24px', maxWidth: 700, margin: '0 auto' }}>
       <div style={{ textAlign: 'center', marginBottom: 32 }}>
-        <span className="pill accent">🎮 Dota 2</span>
+        <span className="pill accent"><Icon name="gamepad" size={14} /> Dota 2</span>
         <h1 className="gradient-text" style={{ fontSize: 'clamp(28px, 6vw, 40px)', marginTop: 16 }}>
           Ранги сервера
         </h1>
@@ -70,7 +75,10 @@ export default function DotaPage() {
 
       <div style={{ textAlign: 'center', marginBottom: 24 }}>
         <button onClick={handleRefreshAll} disabled={refreshing || cooldown}>
-          {refreshing ? 'Обновляем…' : cooldown ? '✓ Запрошено' : '🔄 Обновить все ранги'}
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            {!refreshing && !cooldown && <Icon name="refresh" size={16} />}
+            {refreshing ? 'Обновляем…' : cooldown ? 'Запрошено' : 'Обновить все ранги'}
+          </span>
         </button>
         {notice && <p className="muted" style={{ marginTop: 10, fontSize: 12 }}>{notice}</p>}
       </div>

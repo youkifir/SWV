@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import Icon from '@/components/Icon';
 
 const SECTIONS = [
-  { href: '/awards', title: 'SWAG Awards', description: 'Голосование за номинации сервера', emoji: '🏆' },
-  { href: '/iceberg', title: 'Айсберг', description: 'Чем глубже, тем инсайдернее', emoji: '🧊' },
-  { href: '/history', title: 'История', description: 'Ключевые события сервера', emoji: '📜' },
-  { href: '/dota', title: 'Dota 2', description: 'Ранги участников сервера', emoji: '🎮' },
+  { href: '/awards', title: 'SWAG Awards', description: 'Голосование за номинации сервера', icon: 'trophy' as const },
+  { href: '/iceberg', title: 'Айсберг', description: 'Чем глубже, тем инсайдернее', icon: 'iceberg' as const },
+  { href: '/history', title: 'История', description: 'Ключевые события сервера', icon: 'scroll' as const },
+  { href: '/dota', title: 'Dota 2', description: 'Ранги участников сервера', icon: 'gamepad' as const },
 ];
 
 export default function HomePage() {
@@ -22,13 +23,27 @@ export default function HomePage() {
           <Link key={section.href} href={section.href} style={{ textDecoration: 'none' }}>
             <div className="card card-link spread">
               <div className="row">
-                <span style={{ fontSize: 28 }}>{section.emoji}</span>
+                <span
+                  style={{
+                    width: 48,
+                    height: 48,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1px solid var(--border)',
+                    borderRadius: 10,
+                    color: 'var(--accent)',
+                    background: 'var(--surface-raised)',
+                  }}
+                >
+                  <Icon name={section.icon} size={24} />
+                </span>
                 <div>
                   <p style={{ fontFamily: 'var(--font-display)', fontSize: 17, fontWeight: 500 }}>{section.title}</p>
                   <p className="muted">{section.description}</p>
                 </div>
               </div>
-              <span className="muted">→</span>
+              <span className="muted"><Icon name="arrow" size={18} /></span>
             </div>
           </Link>
         ))}
